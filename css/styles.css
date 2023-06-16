@@ -6,6 +6,14 @@
     width: 80%;
 }
 
+.bug {
+    position: absolute;
+    top: 10%;
+    right: 9%;
+    z-index: 998;
+    width: 80%;
+}
+
 .container {
     background-color: aqua;
     position: fixed;
