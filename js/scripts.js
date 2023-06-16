@@ -12,7 +12,7 @@ startPad.appendChild(frog);
 let bug = document.createElement('img');
 bug.setAttribute('src', 'img/bug.png');
 bug.classList.add('bug');
-function getPadNumber() {
+function frogPadNumber() {
     let currentPad = frog.parentElement;
     let currentPadNumber = parseInt((currentPad.getAttribute('id')).substring(9));
     return currentPadNumber;
@@ -68,13 +68,13 @@ let frogJumps = (function () {
 
 window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown') {
-        landOnNewPad(frogJumps.down(getPadNumber()))
+        landOnNewPad(frogJumps.down(frogPadNumber()))
     } else if (e.key === 'ArrowUp') {
-        landOnNewPad(frogJumps.up(getPadNumber()))
+        landOnNewPad(frogJumps.up(frogPadNumber()))
     } else if (e.key === 'ArrowLeft') {
-        landOnNewPad(frogJumps.left(getPadNumber()))
+        landOnNewPad(frogJumps.left(frogPadNumber()))
     } else if (e.key === 'ArrowRight') {
-        landOnNewPad(frogJumps.right(getPadNumber()))
+        landOnNewPad(frogJumps.right(frogPadNumber()))
     }
 });
 
@@ -83,6 +83,11 @@ function getRandomInt() {
 }
 
 function spawnBug(number) {
+    if (number === frogPadNumber() && number < 16) {
+        number = number + 17
+    } else if (number === frogPadNumber() && number > 15) {
+        number = number - 15
+    }
     let bugSpawnPad = document.getElementById('lily-pad-' + number);
     bugSpawnPad.appendChild(bug);
 }
@@ -96,4 +101,4 @@ function checkIfTogether() {
         spawnBug(getRandomInt());
     }
 }
-window.addEventListener('keydown', checkIfTogether)
+window.addEventListener('keydown', checkIfTogether);
