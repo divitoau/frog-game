@@ -11,6 +11,9 @@ body {
     width: 100%;
     height: 100%;
     text-align: center;
+    padding: 10px;
+    display: grid;
+    grid-template: 1fr 1fr 1fr 1fr / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .frog {
@@ -35,9 +38,6 @@ body {
     background-color: green;
     border: 1rem solid darkgreen;
     display: inline-block;
-    width: 10%;
-    max-height: 21.2vh;
-    max-width: 21.2vh;
     aspect-ratio: 1;
     margin: .8rem;
     border-radius: 35%;
