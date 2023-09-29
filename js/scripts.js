@@ -18,9 +18,13 @@ let bug = document.createElement("img");
 bug.setAttribute("src", "img/bug.png");
 bug.classList.add("bug", "item");
 
-let bomb = document.createElement("img");
-bomb.setAttribute("src", "img/bomb.png");
-bomb.classList.add("bomb", "item");
+let firstBomb = document.createElement("img");
+firstBomb.setAttribute("src", "img/bomb.png");
+firstBomb.classList.add("bomb", "item");
+
+let secondBomb = document.createElement("img");
+secondBomb.setAttribute("src", "img/bomb.png");
+secondBomb.classList.add("bomb", "item");
 
 let currentFrogPadNumber = 1;
 
@@ -98,22 +102,41 @@ spawnBug();
 
 let cornerPadNumbers = [1, 8, 25, 32];
 let edgePadNumbers = [2, 3, 4, 5, 6, 7, 9, 16, 17, 24, 26, 27, 28, 29, 30, 31];
-let currentBombPadNumber;
+let firstBombPadNumber;
+let secondBombPadNumber;
 
-function spawnBomb() {
+function spawnFirstBomb() {
   let newBombPadNumber = getRandomInt();
   let occupiedPads = [currentBugPadNumber, currentFrogPadNumber];
   while (occupiedPads.includes(newBombPadNumber)) {
     newBombPadNumber = getRandomInt();
   }
   let bombSpawnPad = document.getElementById("lily-pad-" + newBombPadNumber);
-  bombSpawnPad.appendChild(bomb);
-  currentBombPadNumber = newBombPadNumber;
+  bombSpawnPad.appendChild(firstBomb);
+  firstBombPadNumber = newBombPadNumber;
+}
+
+function spawnSecondBomb() {
+  let newBombPadNumber = getRandomInt();
+  let occupiedPads = [
+    currentBugPadNumber,
+    currentFrogPadNumber,
+    firstBombPadNumber,
+  ];
+  while (occupiedPads.includes(newBombPadNumber)) {
+    newBombPadNumber = getRandomInt();
+  }
+  let bombSpawnPad = document.getElementById("lily-pad-" + newBombPadNumber);
+  bombSpawnPad.appendChild(secondBomb);
+  secondBombPadNumber = newBombPadNumber;
 }
 
 function dificultyUp() {
   if (score > 4) {
-    spawnBomb();
+    spawnFirstBomb();
+  }
+  if (score > 14) {
+    spawnSecondBomb();
   }
 }
 
@@ -127,14 +150,24 @@ function checkIfEatBug() {
 }
 
 function checkIfDead() {
-  if (currentBombPadNumber === currentFrogPadNumber) {
+  if (
+    firstBombPadNumber === currentFrogPadNumber ||
+    secondBombPadNumber === currentFrogPadNumber
+  ) {
     score = 0;
     scoreText.innerText = "Bugs: " + score;
-    let bombPadElement = document.getElementById(
-      "lily-pad-" + currentBombPadNumber
+    let firstBombPadElement = document.getElementById(
+      "lily-pad-" + firstBombPadNumber
     );
-    bombPadElement.removeChild(bomb);
-    currentBombPadNumber = null;
+    firstBombPadElement.removeChild(firstBomb);
+    firstBombPadNumber = null;
+    if (score > 14) {
+      let secondBombPadElement = document.getElementById(
+        "lily-pad-" + secondBombPadNumber
+      );
+      secondBombPadElement.removeChild(secondBomb);
+      secondBombPadNumber = null;
+    }
     startPad.appendChild(frog);
     currentFrogPadNumber = 1;
     spawnBug();
