@@ -154,8 +154,6 @@ function checkIfDead() {
     firstBombPadNumber === currentFrogPadNumber ||
     secondBombPadNumber === currentFrogPadNumber
   ) {
-    score = 0;
-    scoreText.innerText = "Bugs: " + score;
     let firstBombPadElement = document.getElementById(
       "lily-pad-" + firstBombPadNumber
     );
@@ -168,6 +166,8 @@ function checkIfDead() {
       secondBombPadElement.removeChild(secondBomb);
       secondBombPadNumber = null;
     }
+    score = 0;
+    scoreText.innerText = "Bugs: " + score;
     startPad.appendChild(frog);
     currentFrogPadNumber = 1;
     spawnBug();
