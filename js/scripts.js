@@ -18,20 +18,15 @@ let bug = document.createElement("img");
 bug.setAttribute("src", "img/bug.png");
 bug.classList.add("bug", "item");
 
-let firstBomb = document.createElement("img");
-firstBomb.setAttribute("src", "img/bomb.png");
-firstBomb.classList.add("bomb", "item");
-
-let secondBomb = document.createElement("img");
-secondBomb.setAttribute("src", "img/bomb.png");
-secondBomb.classList.add("bomb", "item");
-
 let currentFrogPadNumber = 1;
+let currentBugPadNumber;
+let occupiedPads = [currentBugPadNumber, currentFrogPadNumber];
 
 function landOnNewPad(number) {
   let newPad = document.getElementById("lily-pad-" + number);
   newPad.appendChild(frog);
   currentFrogPadNumber = number;
+  occupiedPads.splice(1, 1, number);
 }
 
 let frogJumps = (function () {
@@ -82,8 +77,6 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-let currentBugPadNumber;
-
 function getRandomInt() {
   return Math.floor(Math.random() * 32 + 1);
 }
@@ -96,6 +89,7 @@ function spawnBug() {
   let bugSpawnPad = document.getElementById("lily-pad-" + newBugPadNumber);
   bugSpawnPad.appendChild(bug);
   currentBugPadNumber = newBugPadNumber;
+  occupiedPads.splice(0, 1, newBugPadNumber);
 }
 
 spawnBug();
@@ -105,35 +99,41 @@ let edgePadNumbers = [2, 3, 4, 5, 6, 7, 9, 16, 17, 24, 26, 27, 28, 29, 30, 31];
 let firstBombPadNumber;
 let secondBombPadNumber;
 
-function spawnFirstBomb() {
-  let newBombPadNumber = getRandomInt();
-  let occupiedPads = [currentBugPadNumber, currentFrogPadNumber];
-  while (occupiedPads.includes(newBombPadNumber)) {
-    newBombPadNumber = getRandomInt();
+class bomb {
+  constructor(bombNumber) {
+    this.bombNumber = bombNumber;
   }
-  let bombSpawnPad = document.getElementById("lily-pad-" + newBombPadNumber);
-  bombSpawnPad.appendChild(firstBomb);
-  firstBombPadNumber = newBombPadNumber;
-}
 
-function spawnSecondBomb() {
-  let newBombPadNumber = getRandomInt();
-  let occupiedPads = [
-    currentBugPadNumber,
-    currentFrogPadNumber,
-    firstBombPadNumber,
-  ];
-  while (occupiedPads.includes(newBombPadNumber)) {
-    newBombPadNumber = getRandomInt();
+  padNumber;
+
+  createBomb() {
+    let bombImage = document.createElement("img");
+    bombImage.setAttribute("src", "img/bomb.png");
+    bombImage.classList.add("bomb", "item");
+    return bombImage;
   }
-  let bombSpawnPad = document.getElementById("lily-pad-" + newBombPadNumber);
-  bombSpawnPad.appendChild(secondBomb);
-  secondBombPadNumber = newBombPadNumber;
+
+  spawnBomb() {
+    let newBombPadNumber = getRandomInt();
+    while (occupiedPads.includes(newBombPadNumber)) {
+      newBombPadNumber = getRandomInt();
+    }
+    let bombSpawnPad = document.getElementById("lily-pad-" + newBombPadNumber);
+    if (!this.padNumber) {
+      bombSpawnPad.appendChild(this.createBomb());
+    } else {
+      bombSpawnPad.appendChild(
+        document.getElementById("lily-pad-" + this.padNumber).firstChild
+      );
+    }
+    this.padNumber = newBombPadNumber;
+  }
 }
 
 function dificultyUp() {
+  let newBomb = new bomb(1);
   if (score > 4) {
-    spawnFirstBomb();
+    newBomb.spawnBomb();
   }
   if (score > 14) {
     spawnSecondBomb();
@@ -154,8 +154,6 @@ function checkIfDead() {
     firstBombPadNumber === currentFrogPadNumber ||
     secondBombPadNumber === currentFrogPadNumber
   ) {
-    score = 0;
-    scoreText.innerText = "Bugs: " + score;
     let firstBombPadElement = document.getElementById(
       "lily-pad-" + firstBombPadNumber
     );
@@ -168,6 +166,8 @@ function checkIfDead() {
       secondBombPadElement.removeChild(secondBomb);
       secondBombPadNumber = null;
     }
+    score = 0;
+    scoreText.innerText = "Bugs: " + score;
     startPad.appendChild(frog);
     currentFrogPadNumber = 1;
     spawnBug();
